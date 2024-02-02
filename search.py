@@ -58,9 +58,6 @@ def depth_first_search(problem):
     #     start_state = problem.get_start_state()
     #     transitions = problem.get_successors(start_state)
     #     return [  transitions[0].action  ]
-    """
-    Returns a sequence of moves that solves the problem using depth-first search.
-    """
     stack = [(problem.get_start_state(), [])]
     visited = set()
 
@@ -80,7 +77,19 @@ def depth_first_search(problem):
 def breadth_first_search(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raise_not_defined()
+    queue = [(problem.get_start_state(), [])]
+    visited = set()
+
+    while queue:
+        state, actions = queue.pop(0)
+        if problem.is_goal_state(state):
+            return actions
+        visited.add(state)
+        for successor, action, _ in problem.get_successors(state):
+            if successor not in visited:
+                queue.append((successor, actions + [action]))
+    return []
+    # util.raise_not_defined()
 
 
 def uniform_cost_search(problem, heuristic=None):
