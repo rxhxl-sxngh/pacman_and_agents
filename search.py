@@ -58,6 +58,7 @@ def depth_first_search(problem):
     #     start_state = problem.get_start_state()
     #     transitions = problem.get_successors(start_state)
     #     return [  transitions[0].action  ]
+
     stack = [(problem.get_start_state(), [])]
     visited = set()
 
@@ -84,10 +85,11 @@ def breadth_first_search(problem):
         state, actions = queue.pop(0)
         if problem.is_goal_state(state):
             return actions
-        visited.add(state)
-        for successor, action, _ in problem.get_successors(state):
-            if successor not in visited:
-                queue.append((successor, actions + [action]))
+        if state not in visited:
+            visited.add(state)
+            for successor, action, _ in problem.get_successors(state):
+                if successor not in visited:
+                    queue.append((successor, actions + [action]))
     return []
     # util.raise_not_defined()
 
@@ -95,7 +97,26 @@ def breadth_first_search(problem):
 def uniform_cost_search(problem, heuristic=None):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raise_not_defined()
+    from util import PriorityQueue
+
+    frontier = PriorityQueue()
+    frontier.push((problem.get_start_state(), [], 0), 0)  # state, actions, cost
+    visited = set()
+
+    while not frontier.is_empty():
+        state, actions, current_cost = frontier.pop()
+
+        if problem.is_goal_state(state):
+            return actions
+
+        if state not in visited:
+            visited.add(state)
+            for successor, action, step_cost in problem.get_successors(state):
+                if successor not in visited:
+                    new_cost = current_cost + step_cost
+                    frontier.push((successor, actions + [action], new_cost), new_cost)
+    return []
+    # util.raise_not_defined()
 
 
 def null_heuristic(state, problem=None):
