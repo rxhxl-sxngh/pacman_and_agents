@@ -155,8 +155,30 @@ def a_star_search(problem, heuristic=null_heuristic):
     #     start_state = problem.get_start_state()
     #     transitions = problem.get_successors(start_state)
     #     return [  transitions[0].action  ]
+
+    from util import PriorityQueue
+
+    frontier = PriorityQueue()
+    start_state = problem.get_start_state()
+    frontier.push((start_state, [], 0), 0 + heuristic(start_state, problem))  # state, actions, cost
+    visited = set()
+
+    while not frontier.is_empty():
+        state, actions, current_cost = frontier.pop()
+
+        if problem.is_goal_state(state):
+            return actions
+
+        if state not in visited:
+            visited.add(state)
+            for successor, action, step_cost in problem.get_successors(state):
+                if successor not in visited:
+                    new_cost = current_cost + step_cost
+                    priority = new_cost + heuristic(successor, problem)
+                    frontier.push((successor, actions + [action], new_cost), priority)
+    return []
     
-    util.raise_not_defined()
+    # util.raise_not_defined()
 
 
 # (you can ignore this, although it might be helpful to know about)
