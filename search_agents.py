@@ -37,6 +37,8 @@ import util
 import time
 import search
 import tools
+from util import manhattan_distance
+
 
 
 class GoWestAgent(Agent):
@@ -443,9 +445,34 @@ def corners_heuristic(state, problem):
     admissible (as well as consistent).
     """
     corners = problem.corners  # These are the corner coordinates
-    walls = problem.walls  # These are the walls of the maze, as a Grid (game.py)
+    # walls = problem.walls  # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
+    pacman_position, visited_corners = state
+
+    # Find unvisited corners
+    unvisited_corners = [corner for i, corner in enumerate(corners) if not visited_corners[i]]
+
+    # If all corners are visited, heuristic value is 0
+    if len(unvisited_corners) == 0:
+        return 0
+
+    # Calculate Manhattan distance to the closest unvisited corner
+    # closest_distance = min(manhattan_distance(pacman_position, corner) for corner in unvisited_corners)
+
+    # Calculate the total distance to each unvisited corner
+    total_distances = []
+    for corner in unvisited_corners:
+        # Manhattan distance from the closest corner to the current corner
+        closest_to_corner_distance = min(manhattan_distance(corner, other_corner) for other_corner in unvisited_corners)
+        # Manhattan distance from Pacman position to the current corner
+        pacman_to_corner_distance = manhattan_distance(pacman_position, corner)
+        # Total distance to the current corner
+        total_distance = closest_to_corner_distance + pacman_to_corner_distance
+        total_distances.append(total_distance)
+
+    # Return the maximum total distance as the heuristic value
+    return max(total_distances)
     # return 0  # Default to trivial solution
 
 
