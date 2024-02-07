@@ -346,14 +346,16 @@ class CornersProblem(search.SearchProblem):
         Returns the start state (in your state space, not the full Pacman state space)
         """
         "*** YOUR CODE HERE ***"
-        util.raise_not_defined()
+        return (self.starting_position, (False, False, False, False))
+        # util.raise_not_defined()
 
     def is_goal_state(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        util.raise_not_defined()
+        return all(state[1])  # Check if all corners have been visited
+        # util.raise_not_defined()
 
     def get_successors(self, state):
         
@@ -394,7 +396,20 @@ class CornersProblem(search.SearchProblem):
         #             next_state = (nextx, nexty)
         #             cost = self.cost_fn(next_state)
         #             successors.append(tools.Transition(next_state, action, cost))
-        
+
+        x, y = state[0]  # Pacman's current position
+        corners_visited = state[1]  # Corners visited so far
+        successors = []
+        for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
+            dx, dy = Actions.direction_to_vector(action)
+            next_x, next_y = int(x + dx), int(y + dy)
+            if not self.walls[next_x][next_y]:  # Check if the move is valid (not blocked by a wall)
+                next_position = (next_x, next_y)
+                next_corners_visited = list(corners_visited)  # Make a copy of the list
+                for i, corner in enumerate(self.corners):
+                    if next_position == corner:  # If the next position is a corner
+                        next_corners_visited[i] = True  # Mark the corner as visited
+                successors.append(((next_position, tuple(next_corners_visited)), action, 1))  # Add successor
         self._expanded += 1  # NOTE: STUFF WILL BREAK IF YOU CHANGE THIS
         return successors
 
@@ -431,20 +446,6 @@ def corners_heuristic(state, problem):
     walls = problem.walls  # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    node, visited_corners = state
-
-    unvisited_corners = [corner for corner in corners if corner not in visited_corners]
-    heuristic_cost = 0
-
-    # Use the Manhattan distance from the current node to the closest unvisited corner
-    while unvisited_corners:
-        distances = [util.manhattan_distance(node, corner) for corner in unvisited_corners]
-        min_distance = min(distances)
-        heuristic_cost += min_distance
-        closest_corner_index = distances.index(min_distance)
-        node = unvisited_corners.pop(closest_corner_index)
-
-    return heuristic_cost
     # return 0  # Default to trivial solution
 
 
