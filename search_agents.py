@@ -592,14 +592,14 @@ def food_heuristic(state, problem):
     if not food_coords:  # No more food dots left
         return 0
 
-    # Calculate the real distance between two furthest fruits
-    furthest_fruit_distance = calculate_furthest_fruit_distance(food_coords, problem)
+    # Calculate the real distance between two furthest food dotss
+    furthest_food_distance = calculate_furthest_food_distance(food_coords, problem)
 
-    # Calculate the real distance from the current Pacman position to the closer of the two furthest fruits
-    pacman_to_closest_fruit_distance = calculate_pacman_to_closest_fruit_distance(position, food_coords, problem)
+    # Calculate the real distance from the current Pacman position to the closer of the two furthest food dots
+    pacman_to_closest_food_distance = calculate_pacman_to_closest_food_distance(position, food_coords, problem)
 
     # Return the sum of the distances as the heuristic value
-    return furthest_fruit_distance + pacman_to_closest_fruit_distance
+    return furthest_food_distance + pacman_to_closest_food_distance
 
     ### OLD HEURISTIC: PRETTY GOOD BUT EXPANDS TOO NODES ###
     ### Calculate Manhattan distances from the current position to all food dots and return the maximum distance ###
@@ -609,15 +609,15 @@ def food_heuristic(state, problem):
     #     return  0
 
     # # Calculate Manhattan distances from the current position to all food dots
-    # manhattan_distances = [abs(pos[0] - position[0]) + abs(pos[1] - position[1]) for pos in food_coords]
+    # manhattan_distances = [manhattan_distance(position, pos) for pos in food_coords]
 
-    # # Return the maximum distance to a food dot (this helps guide the search towards the food)
+    # # Return the maximum distance to a food dot as the heuristic value
     # return max(manhattan_distances)
     # return 0  # Default to trivial solution
 
-def calculate_furthest_fruit_distance(food_coords, problem):
+def calculate_furthest_food_distance(food_coords, problem):
     """
-    Calculate the real distance between the two furthest fruits in the labyrinth.
+    Calculate the real distance between the two furthest food dots.
     """
     furthest_distance = 0
     for i in range(len(food_coords)):
@@ -627,13 +627,13 @@ def calculate_furthest_fruit_distance(food_coords, problem):
                 furthest_distance = distance
     return furthest_distance
 
-def calculate_pacman_to_closest_fruit_distance(position, food_coords, problem):
+def calculate_pacman_to_closest_food_distance(position, food_coords, problem):
     """
-    Calculate the real distance from the current Pacman position to the closer of the two furthest fruits.
+    Calculate the real distance from the current Pacman position to the closer of the two furthest food dots.
     """
     closest_distance = float('inf')
-    for fruit in food_coords:
-        distance = maze_distance(position, fruit, problem.starting_game_state)
+    for food in food_coords:
+        distance = maze_distance(position, food, problem.starting_game_state)
         if distance < closest_distance:
             closest_distance = distance
     return closest_distance
